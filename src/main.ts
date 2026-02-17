@@ -142,7 +142,7 @@ export default class IllustrationFinderPlugin extends Plugin {
       if (source === 'met') {
         searchPromises.push(
           this.metService
-            .search(query, params.limit)
+            .search(query, params.limit, analysis.metFilters)
             .then((results) => ({ source: 'met', results }))
         );
       } else if (source === 'unsplash' && this.unsplashService) {

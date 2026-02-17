@@ -15,6 +15,12 @@ export interface IllustrationResult {
   metadata: Record<string, any>;
 }
 
+export interface MetFilters {
+  departmentId?: number;
+  dateBegin?: number;
+  dateEnd?: number;
+}
+
 export interface IntentionAnalysis {
   analysis: {
     type: string;
@@ -25,6 +31,7 @@ export interface IntentionAnalysis {
   sources: string[];
   queries: Record<string, string>;
   reasoning: string;
+  metFilters?: MetFilters;
 }
 
 export interface SearchParams {

@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { IntentionAnalysis } from '../types/types';
+import { IntentionAnalysis, MetFilters } from '../types/types';
 
 const MODEL = 'claude-sonnet-4-20250514';
 const MAX_RETRIES = 2;
@@ -28,17 +28,28 @@ Choix selon contexte :
 - Scientifique ancien → Gallica + Met Museum
 - Conceptuel / Abstrait → Met Museum + Unsplash`;
 
+const MET_DEPARTMENTS = `Départements du Met Museum (utilise departmentId pour filtrer) :
+1=American Decorative Arts, 3=Ancient Near Eastern Art, 4=Arms and Armor,
+5=Arts of Africa/Oceania/Americas, 6=Asian Art, 7=The Cloisters,
+8=The Costume Institute, 9=Drawings and Prints, 10=Egyptian Art,
+11=European Paintings, 12=European Sculpture and Decorative Arts,
+13=Greek and Roman Art, 14=Islamic Art, 15=The Robert Lehman Collection,
+17=Medieval Art, 18=Musical Instruments, 19=Photographs, 21=Modern Art`;
+
 const SYSTEM_PROMPT = `Tu es un assistant spécialisé dans la recherche d'illustrations libres de droit.
 
 Tu as accès à cette skill qui décrit les meilleures sources :
 ${SKILL_CONTENT}
+
+${MET_DEPARTMENTS}
 
 Ton rôle :
 1. Analyser l'intention de l'utilisateur
 2. Déterminer le type d'illustration recherché (historique, moderne, abstraite, artistique, etc.)
 3. Choisir les 2-3 meilleures sources selon la skill
 4. Formuler des requêtes de recherche optimales pour chaque source sélectionnée
-5. Retourner uniquement un JSON valide, sans texte avant ou après
+5. Pour le Met Museum, suggérer des filtres (département, plage de dates) pour affiner les résultats
+6. Retourner uniquement un JSON valide, sans texte avant ou après
 
 Format de réponse JSON attendu :
 {
@@ -54,6 +65,11 @@ Format de réponse JSON attendu :
     "unsplash": "requête optimisée pour Unsplash en anglais",
     "gallica": "requête optimisée pour Gallica en français"
   },
+  "metFilters": {
+    "departmentId": null,
+    "dateBegin": null,
+    "dateEnd": null
+  },
   "reasoning": "Explication concise du choix des sources et des requêtes"
 }
 
@@ -63,6 +79,8 @@ Règles importantes :
 - Pour des photos modernes → privilégier Unsplash
 - Les requêtes doivent être en anglais pour Met/Unsplash, en français pour Gallica
 - Les requêtes doivent être courtes et précises (3-6 mots)
+- metFilters.departmentId : un entier parmi les départements listés, ou null si non pertinent
+- metFilters.dateBegin/dateEnd : années (ex: 1800, 1900) pour borner la période, ou null
 - Retourne UNIQUEMENT le JSON, sans markdown, sans texte explicatif`;
 
 export class ClaudeService {
@@ -148,7 +166,7 @@ Sources disponibles: ${selectedSources.join(', ')}`;
     parsed: any,
     selectedSources: string[]
   ): IntentionAnalysis {
-    return {
+    const result: IntentionAnalysis = {
       analysis: {
         type: parsed.analysis?.type || 'unknown',
         period: parsed.analysis?.period || null,
@@ -163,6 +181,24 @@ Sources disponibles: ${selectedSources.join(', ')}`;
       queries: parsed.queries || {},
       reasoning: parsed.reasoning || '',
     };
+
+    if (parsed.metFilters) {
+      const filters: MetFilters = {};
+      if (typeof parsed.metFilters.departmentId === 'number') {
+        filters.departmentId = parsed.metFilters.departmentId;
+      }
+      if (typeof parsed.metFilters.dateBegin === 'number') {
+        filters.dateBegin = parsed.metFilters.dateBegin;
+      }
+      if (typeof parsed.metFilters.dateEnd === 'number') {
+        filters.dateEnd = parsed.metFilters.dateEnd;
+      }
+      if (Object.keys(filters).length > 0) {
+        result.metFilters = filters;
+      }
+    }
+
+    return result;
   }
 
   async suggestFromNote(noteContent: string): Promise<{ intention: string; context: string }> {

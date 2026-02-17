@@ -1,15 +1,27 @@
-import { IllustrationResult } from '../types/types';
+import { IllustrationResult, MetFilters } from '../types/types';
 
 const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
 const TIMEOUT = 10000;
 
 export class MetMuseumService {
-  async search(query: string, limit: number = 5): Promise<IllustrationResult[]> {
+  async search(
+    query: string,
+    limit: number = 5,
+    filters?: MetFilters
+  ): Promise<IllustrationResult[]> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
     try {
-      const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`;
+      let url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`;
+
+      if (filters?.departmentId) {
+        url += `&departmentId=${filters.departmentId}`;
+      }
+      if (filters?.dateBegin != null && filters?.dateEnd != null) {
+        url += `&dateBegin=${filters.dateBegin}&dateEnd=${filters.dateEnd}`;
+      }
+
       const response = await fetch(url, { signal: controller.signal });
 
       if (!response.ok) {
@@ -23,9 +35,11 @@ export class MetMuseumService {
         return [];
       }
 
-      const idsToFetch = objectIDs.slice(0, limit);
+      // Random sampling: pick `limit` random IDs from results
+      const sampled = this.randomSample(objectIDs, limit);
+
       const settled = await Promise.allSettled(
-        idsToFetch.map((id) => this.getObjectDetails(id))
+        sampled.map((id) => this.getObjectDetails(id))
       );
 
       const results: IllustrationResult[] = [];
@@ -39,6 +53,19 @@ export class MetMuseumService {
     } finally {
       clearTimeout(timeoutId);
     }
+  }
+
+  private randomSample(ids: number[], count: number): number[] {
+    if (ids.length <= count) return ids;
+
+    const sampled: number[] = [];
+    const pool = [...ids];
+    for (let i = 0; i < count; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      sampled.push(pool[idx]);
+      pool.splice(idx, 1);
+    }
+    return sampled;
   }
 
   async getObjectDetails(objectId: number): Promise<IllustrationResult> {
