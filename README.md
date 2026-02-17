@@ -1,216 +1,206 @@
----
-type: documentation
-project: obsidian-illustration-finder
-audience: end-users
-created: '2026-02-16'
----
-# README - Illustration Finder for Obsidian
+# Illustration Finder for Obsidian
 
-> Recherchez et insérez des illustrations libres de droit directement dans vos notes Obsidian, avec l'aide de l'IA Claude.
+> Search and insert royalty-free illustrations directly into your Obsidian notes, powered by Claude AI.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-## ✨ Fonctionnalités
+## Features
 
-- 🔍 **Recherche intelligente** : Décrivez simplement ce que vous voulez, Claude comprend votre intention
-- 🎨 **Sources multiples** : Metropolitan Museum (492K+ œuvres), Unsplash (photos modernes), Gallica (patrimoine français)
-- 📝 **Insertion automatique** : L'image est téléchargée et insérée avec l'attribution correcte
-- ⚡ **Rapide** : Résultats en quelques secondes
-- 🆓 **100% gratuit** : Toutes les images sont libres de droit (CC0, domaine public)
+- **Smart search**: Simply describe what you want — Claude understands your intent
+- **Multiple sources**: Metropolitan Museum (492K+ artworks), Unsplash (modern photos), Gallica (French heritage)
+- **Auto-insert**: Images are downloaded and inserted with proper attribution
+- **Fast**: Results in seconds
+- **100% free**: All images are royalty-free (CC0, public domain)
 
-## 🚀 Installation
+## Installation
 
-### Via Community Plugins (recommandé)
+### Via Community Plugins (recommended)
 
-1. Ouvrez Obsidian
-2. Allez dans **Settings** → **Community plugins** → **Browse**
-3. Recherchez "**Illustration Finder**"
-4. Cliquez sur **Install**, puis **Enable**
+1. Open Obsidian
+2. Go to **Settings** → **Community plugins** → **Browse**
+3. Search for "**Illustration Finder**"
+4. Click **Install**, then **Enable**
 
-### Installation manuelle
+### Manual installation
 
-1. Téléchargez la dernière release depuis [GitHub](https://github.com/joelgombin/obsidian-illustration-finder/releases)
-2. Extrayez le fichier ZIP dans votre dossier `.obsidian/plugins/`
-3. Redémarrez Obsidian
-4. Activez le plugin dans **Settings** → **Community plugins**
+1. Download the latest release from [GitHub](https://github.com/joelgombin/obsidian-illustration-finder/releases)
+2. Extract the ZIP file into your `.obsidian/plugins/` folder
+3. Restart Obsidian
+4. Enable the plugin in **Settings** → **Community plugins**
 
-## ⚙️ Configuration
+## Configuration
 
-### 1. Clé API Anthropic (requis)
+### 1. Anthropic API key (required)
 
-Pour utiliser l'analyse intelligente des intentions, vous devez configurer une clé API Anthropic :
+To use the smart intent analysis, you need to configure an Anthropic API key:
 
-1. Créez un compte sur [console.anthropic.com](https://console.anthropic.com)
-2. Générez une clé API
-3. Dans Obsidian : **Settings** → **Illustration Finder** → collez votre clé
+1. Create an account on [console.anthropic.com](https://console.anthropic.com)
+2. Generate an API key
+3. In Obsidian: **Settings** → **Illustration Finder** → paste your key
 
-**Note** : Les 5 premiers crédits sont gratuits, puis ~$0.003 par recherche.
+**Note**: The first 5 credits are free, then ~$0.003 per search.
 
-### 2. Clé API Unsplash (optionnel)
+### 2. Unsplash API key (optional)
 
-Pour rechercher des photos modernes :
+To search for modern photos:
 
-1. Créez un compte sur [unsplash.com/developers](https://unsplash.com/developers)
-2. Créez une application
-3. Copiez votre Access Key
-4. Dans Obsidian : **Settings** → **Illustration Finder** → collez la clé
+1. Create an account on [unsplash.com/developers](https://unsplash.com/developers)
+2. Create an application
+3. Copy your Access Key
+4. In Obsidian: **Settings** → **Illustration Finder** → paste the key
 
-**Note** : 50 requêtes/heure en gratuit.
+**Note**: 50 requests/hour on the free tier.
 
-### 3. Paramètres
+### 3. Settings
 
-- **Dossier des illustrations** : Où sauvegarder les images (défaut : `Assets/Illustrations`)
-- **Redimensionner** : Redimensionner automatiquement les images (recommandé)
-- **Attribution** : Inclure l'attribution dans la note (recommandé pour respect des licences)
+- **Illustrations folder**: Where to save images (default: `Assets/Illustrations`)
+- **Resize**: Automatically resize images (recommended)
+- **Attribution**: Include attribution in the note (recommended for license compliance)
 
-## 📖 Utilisation
+## Usage
 
-### Recherche basique
+### Basic search
 
-1. Placez votre curseur où vous voulez l'image
-2. Ouvrez la palette de commandes (`Ctrl/Cmd + P`)
-3. Tapez "**Illustration Finder**" et sélectionnez la commande
-4. Décrivez votre intention :
+1. Place your cursor where you want the image
+2. Open the command palette (`Ctrl/Cmd + P`)
+3. Type "**Illustration Finder**" and select the command
+4. Describe what you're looking for:
    ```
-   Une gravure scientifique du 19e siècle sur l'électricité
+   A 19th century scientific engraving about electricity
    ```
-5. Choisissez une image dans les résultats
-6. L'image est insérée automatiquement !
+5. Choose an image from the results
+6. The image is automatically inserted!
 
-### Raccourci clavier
+### Keyboard shortcut
 
-Par défaut : `Ctrl/Cmd + Shift + I`
+Default: `Ctrl/Cmd + Shift + I`
 
-Personnalisable dans **Settings** → **Hotkeys** → **Illustration Finder**
+Customizable in **Settings** → **Hotkeys** → **Illustration Finder**
 
-### Exemples de recherches
+### Search examples
 
-**Art historique** :
+**Historical art**:
 ```
-Portrait Renaissance italienne
+Italian Renaissance portrait
 ```
-→ Recherchera dans Metropolitan Museum
+→ Searches the Metropolitan Museum
 
-**Science ancienne** :
+**Ancient science**:
 ```
-Gravure anatomique planche botanique
+Anatomical engraving botanical plate
 ```
-→ Recherchera dans Gallica et Met Museum
+→ Searches Gallica and Met Museum
 
-**Photo moderne** :
+**Modern photo**:
 ```
-Bureau moderne avec plantes
+Modern office with plants
 ```
-→ Recherchera dans Unsplash
+→ Searches Unsplash
 
-**Abstrait/Conceptuel** :
+**Abstract/Conceptual**:
 ```
-Illustration ironique du temps qui passe
+Ironic illustration about the passage of time
 ```
-→ Claude choisira les meilleures sources selon le contexte
+→ Claude picks the best sources based on context
 
-## 🎯 Sources disponibles
+## Available sources
 
-| Source | Type | Nombre d'œuvres | Licence |
+| Source | Type | Number of works | License |
 |--------|------|-----------------|---------|
-| **Metropolitan Museum** | Art classique, antiquités | 492 000+ | CC0 (domaine public) |
-| **Unsplash** | Photos modernes | Millions | Unsplash License |
-| **Gallica (BnF)** | Patrimoine français | Millions | Domaine public |
+| **Metropolitan Museum** | Classical art, antiquities | 492,000+ | CC0 (public domain) |
+| **Unsplash** | Modern photos | Millions | Unsplash License |
+| **Gallica (BnF)** | French heritage | Millions | Public domain |
 
-### Quand utiliser quelle source ?
+### Which source to use?
 
-- **Art classique, peintures, sculptures** → Met Museum
-- **Photos modernes, lifestyle, tech** → Unsplash  
-- **Patrimoine français, gravures anciennes, cartes** → Gallica
-- **Pas sûr ?** → Laissez Claude choisir !
+- **Classical art, paintings, sculptures** → Met Museum
+- **Modern photos, lifestyle, tech** → Unsplash
+- **French heritage, old engravings, maps** → Gallica
+- **Not sure?** → Let Claude choose!
 
-## 💡 Conseils d'utilisation
+## Tips
 
-### Soyez spécifique
+### Be specific
 
-❌ Mauvais : "Une image de nature"
-✅ Bon : "Paysage de montagne enneigée au lever du soleil"
+Bad: "A nature image"
+Good: "Snowy mountain landscape at sunrise"
 
-### Donnez du contexte
+### Provide context
 
-Utilisez le champ "Contexte" pour affiner :
+Use the "Context" field to refine results:
 ```
-Intention : Illustration scientifique cerveau
-Contexte : Article sur les neurosciences pour étudiants
+Intent: Scientific brain illustration
+Context: Neuroscience article for students
 ```
 
-### Vérifiez l'attribution
+### Check attribution
 
-Même si les images sont libres de droit, il est recommandé de garder l'attribution pour :
-- Respecter le travail des artistes/photographes
-- Tracer la source de vos images
-- Respecter les bonnes pratiques académiques
+Even though images are royalty-free, it's good practice to keep attribution to:
+- Respect the work of artists/photographers
+- Track the source of your images
+- Follow academic best practices
 
-## 🔧 Dépannage
+## Troubleshooting
 
-### "Erreur : API key invalide"
+### "Error: Invalid API key"
 
-- Vérifiez que votre clé Anthropic est correcte
-- Vérifiez que vous avez encore des crédits
-- Essayez de régénérer une nouvelle clé
+- Check that your Anthropic key is correct
+- Verify you still have credits
+- Try regenerating a new key
 
-### "Aucun résultat trouvé"
+### "No results found"
 
-- Essayez une recherche plus générale
-- Vérifiez votre connexion internet
-- Essayez une autre source
-- Reformulez votre intention
+- Try a broader search
+- Check your internet connection
+- Try a different source
+- Rephrase your intent
 
-### "Les images ne se téléchargent pas"
+### "Images won't download"
 
-- Vérifiez les permissions du dossier de destination
-- Vérifiez l'espace disque disponible
-- Essayez de changer le dossier dans les paramètres
+- Check permissions on the destination folder
+- Check available disk space
+- Try changing the folder in settings
 
-### Performance lente
+### Slow performance
 
-- Réduisez le nombre de résultats demandés
-- Désactivez le cache si problème de mémoire
-- Vérifiez votre connexion internet
+- Reduce the number of requested results
+- Disable cache if experiencing memory issues
+- Check your internet connection
 
-## 🤝 Contribuer
+## Contributing
 
-Les contributions sont les bienvenues !
+Contributions are welcome!
 
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/amelioration`)
-3. Commit vos changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
-4. Push (`git push origin feature/amelioration`)
-5. Ouvrez une Pull Request
+1. Fork the project
+2. Create a branch (`git checkout -b feature/improvement`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push (`git push origin feature/improvement`)
+5. Open a Pull Request
 
-## 📝 Changelog
+## Changelog
 
 ### v1.0.0 (2026-02-16)
 
-- 🎉 Release initiale
-- ✨ Recherche Met Museum
-- ✨ Recherche Unsplash
-- ✨ Analyse d'intention par Claude
-- ✨ Insertion automatique avec attribution
-- ⚙️ Configuration des paramètres
+- Initial release
+- Met Museum search
+- Unsplash search
+- Intent analysis powered by Claude
+- Auto-insert with attribution
+- Settings configuration
 
-## 📄 Licence
+## License
 
-MIT License - voir [LICENSE](LICENSE)
+MIT License - see [LICENSE](LICENSE)
 
-## 🙏 Remerciements
+## Acknowledgements
 
-- [Metropolitan Museum](https://www.metmuseum.org/) pour leur incroyable collection en open access
-- [Unsplash](https://unsplash.com/) pour leurs magnifiques photos
-- [Gallica (BnF)](https://gallica.bnf.fr/) pour la numérisation du patrimoine français
-- [Anthropic](https://www.anthropic.com/) pour l'API Claude
+- [Metropolitan Museum](https://www.metmuseum.org/) for their incredible open access collection
+- [Unsplash](https://unsplash.com/) for their beautiful photos
+- [Gallica (BnF)](https://gallica.bnf.fr/) for digitizing French heritage
+- [Anthropic](https://www.anthropic.com/) for the Claude API
 
-## 📞 Support
+## Support
 
-- 🐛 **Bugs** : [GitHub Issues](https://github.com/joelgombin/obsidian-illustration-finder/issues)
-- 💬 **Questions** : [Discussions](https://github.com/joelgombin/obsidian-illustration-finder/discussions)
-
----
-
-**Fait avec ❤️ pour la communauté Obsidian**
+- **Bugs**: [GitHub Issues](https://github.com/joelgombin/obsidian-illustration-finder/issues)
+- **Questions**: [Discussions](https://github.com/joelgombin/obsidian-illustration-finder/discussions)
