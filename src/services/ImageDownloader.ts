@@ -13,27 +13,34 @@ export class ImageDownloader {
   async downloadAndInsert(options: DownloadOptions): Promise<void> {
     const { result, targetFolder } = options;
 
-    // Download the image
-    const response = await fetch(result.imageUrl);
-    if (!response.ok) {
-      throw new Error(
-        `Failed to download image: ${response.status} ${response.statusText}`
-      );
+    let markdown: string;
+
+    if (result.source === 'Unsplash') {
+      // Hotlink Unsplash images per their guidelines:
+      // https://help.unsplash.com/en/articles/2511271-guideline-hotlinking-images
+      const link = `[${result.artist} on Unsplash](${result.sourceUrl})`;
+      markdown = `![${result.title}](${result.imageUrl})\n*Photo by ${link}*`;
+    } else {
+      // Download and save locally for other sources
+      const response = await fetch(result.imageUrl);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to download image: ${response.status} ${response.statusText}`
+        );
+      }
+      const arrayBuffer = await response.arrayBuffer();
+
+      if (!this.app.vault.getAbstractFileByPath(targetFolder)) {
+        await this.app.vault.createFolder(targetFolder);
+      }
+
+      const filename = this.generateFilename(result);
+      const filepath = `${targetFolder}/${filename}`;
+      await this.app.vault.createBinary(filepath, arrayBuffer);
+
+      markdown = this.generateMarkdown(result, filepath);
     }
-    const arrayBuffer = await response.arrayBuffer();
 
-    // Ensure target folder exists
-    if (!this.app.vault.getAbstractFileByPath(targetFolder)) {
-      await this.app.vault.createFolder(targetFolder);
-    }
-
-    // Generate filename and save
-    const filename = this.generateFilename(result);
-    const filepath = `${targetFolder}/${filename}`;
-    await this.app.vault.createBinary(filepath, arrayBuffer);
-
-    // Generate markdown and insert at cursor
-    const markdown = this.generateMarkdown(result, filepath);
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (view) {
       view.editor.replaceSelection(markdown);
