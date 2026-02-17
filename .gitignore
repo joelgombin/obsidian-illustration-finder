@@ -1,0 +1,20 @@
+# Build
+main.js
+*.js.map
+
+# Dependencies
+node_modules/
+
+# Obsidian
+.obsidian/
+
+# Environment
+.env
+.env.local
+
+# Tests
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db
