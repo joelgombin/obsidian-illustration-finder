@@ -1,4 +1,4 @@
-import { App, MarkdownView, Notice } from 'obsidian';
+import { App, MarkdownView, Notice, requestUrl } from 'obsidian';
 import { IllustrationResult, DownloadOptions } from '../types/types';
 import { sanitizeFilename } from '../utils/image';
 import { generateImageMarkdown } from '../utils/markdown';
@@ -22,13 +22,8 @@ export class ImageDownloader {
       markdown = `![${result.title}](${result.imageUrl})\n*Photo by ${link}*`;
     } else {
       // Download and save locally for other sources
-      const response = await fetch(result.imageUrl);
-      if (!response.ok) {
-        throw new Error(
-          `Failed to download image: ${response.status} ${response.statusText}`
-        );
-      }
-      const arrayBuffer = await response.arrayBuffer();
+      const response = await requestUrl({ url: result.imageUrl });
+      const arrayBuffer = response.arrayBuffer;
 
       if (!this.app.vault.getAbstractFileByPath(targetFolder)) {
         await this.app.vault.createFolder(targetFolder);

@@ -9,7 +9,7 @@
 
 - **Smart search**: Describe what you want — Claude analyzes your intent and builds optimized queries for each source
 - **AI auto-fill**: Click the sparkle button to let Claude suggest an illustration based on your current note content
-- **Multiple sources**: Metropolitan Museum (492K+ artworks), Unsplash (modern photos), Gallica (French heritage)
+- **Multiple sources**: Metropolitan Museum (492K+ artworks), Unsplash (modern photos)
 - **Auto-insert**: The selected image is downloaded to your vault and inserted at cursor position with attribution
 
 ## Installation
@@ -66,7 +66,7 @@ Required only if you want to search Unsplash photos.
 3. Run **"Illustration Finder: Search for an illustration"**
 4. Describe what you're looking for — or click the sparkle button to auto-fill from your note
 5. Optionally add context (e.g. "blog post about neuroscience")
-6. Select which sources to search (Met Museum, Unsplash, Gallica)
+6. Select which sources to search (Met Museum, Unsplash)
 7. Pick an image from the results — it gets downloaded and inserted automatically
 
 You can assign a custom hotkey in **Settings** → **Hotkeys** → search for "Illustration Finder".
@@ -76,7 +76,7 @@ You can assign a custom hotkey in **Settings** → **Hotkeys** → search for "I
 When an Anthropic API key is configured, Claude:
 - Analyzes your intent to determine the type of illustration (historical, modern, scientific, etc.)
 - Picks the best sources based on context
-- Formulates optimized search queries per source (English for Met/Unsplash, French for Gallica)
+- Formulates optimized search queries per source in English
 - Suggests Met Museum department filters and date ranges for more relevant results
 
 ## Available sources
@@ -85,7 +85,16 @@ When an Anthropic API key is configured, Claude:
 |--------|------|---------|
 | **Metropolitan Museum** | Classical art, antiquities, 492K+ works | CC0 (public domain) |
 | **Unsplash** | Modern photos | [Unsplash License](https://unsplash.com/license) |
-| **Gallica (BnF)** | French heritage, engravings, maps | Public domain |
+
+## Network usage
+
+This plugin makes network requests to the following external services:
+
+- **Anthropic API** (`api.anthropic.com`) — AI intent analysis and note-based suggestions. Requires a user-provided API key. Your search query and (optionally) note content are sent to generate optimized search terms. No data is stored by the plugin beyond the current session.
+- **Metropolitan Museum API** (`collectionapi.metmuseum.org`) — Public API, no authentication required. Search queries and image downloads.
+- **Unsplash API** (`api.unsplash.com`) — Photo search. Requires a user-provided API key. Unsplash images are hotlinked (not downloaded) per [Unsplash guidelines](https://help.unsplash.com/en/articles/2511271-guideline-hotlinking-images).
+
+This plugin does not collect telemetry or send any data to the plugin author.
 
 ## Contributing
 
@@ -104,7 +113,6 @@ MIT — see [LICENSE](LICENSE)
 
 - [Metropolitan Museum](https://www.metmuseum.org/) for their open access collection
 - [Unsplash](https://unsplash.com/) for their photo library
-- [Gallica (BnF)](https://gallica.bnf.fr/) for digitizing French heritage
 - [Anthropic](https://www.anthropic.com/) for the Claude API
 
 ## Support

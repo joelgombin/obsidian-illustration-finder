@@ -36,12 +36,12 @@ describe('ClaudeService', () => {
       const result = await service.analyzeIntention(
         "Une gravure scientifique du 19e siècle sur l'électricité",
         '',
-        ['met', 'gallica', 'unsplash']
+        ['met', 'unsplash']
       );
 
       expect(result.analysis.type).toBe('historique');
-      expect(result.sources).toContain('gallica');
-      expect(result.queries.gallica).toBeTruthy();
+      expect(result.sources).toContain('met');
+      expect(result.queries.met).toBeTruthy();
     });
 
     it('should analyze modern query correctly', async () => {
@@ -83,10 +83,7 @@ describe('ClaudeService', () => {
           ],
         });
 
-      const result = await service.analyzeIntention('test', '', [
-        'met',
-        'gallica',
-      ]);
+      const result = await service.analyzeIntention('test', '', ['met']);
 
       expect(mockCreate).toHaveBeenCalledTimes(2);
       expect(result.sources).toBeTruthy();
@@ -120,10 +117,7 @@ describe('ClaudeService', () => {
         ],
       });
 
-      const result = await service.analyzeIntention('test', '', [
-        'met',
-        'gallica',
-      ]);
+      const result = await service.analyzeIntention('test', '', ['met']);
 
       expect(result.analysis.type).toBe('historique');
     });

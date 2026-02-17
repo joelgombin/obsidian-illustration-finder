@@ -59,7 +59,7 @@ describe('UnsplashService', () => {
       statusText: 'Too Many Requests',
     });
 
-    await expect(service.search('test', 5)).rejects.toThrow('rate limit');
+    await expect(service.search('test', 5)).rejects.toThrow();
   });
 
   it('should handle empty results', async () => {

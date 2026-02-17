@@ -30,8 +30,10 @@ jobs:
       - name: Set version from tag
         run: |
           tag="${GITHUB_REF#refs/tags/}"
+          minApp=$(jq -r '.minAppVersion' manifest.json)
           jq --arg v "$tag" '.version = $v' manifest.json > manifest.tmp && mv manifest.tmp manifest.json
           jq --arg v "$tag" '.version = $v' package.json > package.tmp && mv package.tmp package.json
+          jq --arg v "$tag" --arg m "$minApp" '. + {($v): $m}' versions.json > versions.tmp && mv versions.tmp versions.json
 
       - name: Build plugin
         run: npm run build
@@ -41,7 +43,7 @@ jobs:
           tag="${GITHUB_REF#refs/tags/}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add manifest.json package.json
+          git add manifest.json package.json versions.json
           git commit -m "chore: bump version to $tag"
           git push origin HEAD:main
 

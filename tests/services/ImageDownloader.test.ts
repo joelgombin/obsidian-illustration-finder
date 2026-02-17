@@ -39,7 +39,7 @@ describe('ImageDownloader', () => {
         targetFolder: 'Assets/Illustrations',
       });
 
-      expect(fetch).toHaveBeenCalledWith(mockResult.imageUrl);
+      expect(fetch).toHaveBeenCalledWith(mockResult.imageUrl, {});
       expect(mockApp.vault.files.size).toBeGreaterThan(0);
     });
 
@@ -66,7 +66,7 @@ describe('ImageDownloader', () => {
           result: mockResult,
           targetFolder: 'Assets',
         })
-      ).rejects.toThrow('Failed to download image');
+      ).rejects.toThrow();
     });
   });
 

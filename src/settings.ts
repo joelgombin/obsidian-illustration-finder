@@ -19,7 +19,7 @@ export const DEFAULT_SETTINGS: IllustrationFinderSettings = {
   anthropicApiKey: '',
   unsplashApiKey: '',
   illustrationFolder: 'Assets/Illustrations',
-  defaultSources: ['met', 'unsplash', 'gallica'],
+  defaultSources: ['met', 'unsplash'],
   defaultResultCount: 5,
   autoResize: true,
   maxImageWidth: 1920,

@@ -5,13 +5,12 @@ export const claudeIntentionAnalysis = {
     style: 'gravure scientifique',
     keywords: ['électricité', 'expériences', 'physique'],
   },
-  sources: ['gallica', 'met'],
+  sources: ['met'],
   queries: {
-    gallica: 'gravure électricité 19e siècle expériences',
     met: 'electricity scientific illustration 19th century',
   },
   reasoning:
-    'Demande historique et scientifique → Gallica prioritaire pour patrimoine français, Met en complément pour illustrations scientifiques',
+    'Demande historique et scientifique → Met Museum pour illustrations scientifiques classiques',
 };
 
 export const claudeModernArtAnalysis = {
