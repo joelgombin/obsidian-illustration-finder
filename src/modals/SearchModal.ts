@@ -1,5 +1,6 @@
-import { App, Modal } from 'obsidian';
+import { App, Modal, Notice } from 'obsidian';
 import { SearchParams } from '../types/types';
+import { ClaudeService } from '../services/ClaudeService';
 
 const SOURCE_OPTIONS = [
   { id: 'met', label: 'Metropolitan Museum' },
@@ -11,16 +12,22 @@ export class SearchModal extends Modal {
   private defaultSources: string[];
   private defaultResultCount: number;
   private onSubmit: (params: SearchParams) => void;
+  private claudeService: ClaudeService | null;
+  private noteContent: string;
 
   constructor(
     app: App,
     defaultSources: string[],
     defaultResultCount: number,
+    claudeService: ClaudeService | null,
+    noteContent: string,
     onSubmit: (params: SearchParams) => void
   ) {
     super(app);
     this.defaultSources = defaultSources;
     this.defaultResultCount = defaultResultCount;
+    this.claudeService = claudeService;
+    this.noteContent = noteContent;
     this.onSubmit = onSubmit;
   }
 
@@ -35,7 +42,11 @@ export class SearchModal extends Modal {
     const intentionDiv = contentEl.createDiv({
       cls: 'illustration-finder-field',
     });
-    intentionDiv.createEl('label', { text: 'Describe your intention:' });
+    const intentionLabelRow = intentionDiv.createDiv({
+      cls: 'illustration-finder-label-row',
+    });
+    intentionLabelRow.createEl('label', { text: 'Describe your intention:' });
+
     const intentionInput = intentionDiv.createEl('textarea', {
       cls: 'illustration-finder-textarea',
       attr: {
@@ -50,7 +61,11 @@ export class SearchModal extends Modal {
     const contextDiv = contentEl.createDiv({
       cls: 'illustration-finder-field',
     });
-    contextDiv.createEl('label', { text: 'Context (optional):' });
+    const contextLabelRow = contextDiv.createDiv({
+      cls: 'illustration-finder-label-row',
+    });
+    contextLabelRow.createEl('label', { text: 'Context (optional):' });
+
     const contextInput = contextDiv.createEl('textarea', {
       cls: 'illustration-finder-textarea',
       attr: {
@@ -59,6 +74,43 @@ export class SearchModal extends Modal {
         rows: '2',
       },
     });
+
+    // Add sparkle buttons if Claude is available and there's note content
+    if (this.claudeService && this.noteContent.trim()) {
+      const sparkleBtn = intentionLabelRow.createEl('button', {
+        cls: 'illustration-finder-sparkle-btn',
+        attr: { 'aria-label': 'Auto-fill from note with AI' },
+      });
+      sparkleBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z"/></svg>';
+
+      let isLoading = false;
+      sparkleBtn.addEventListener('click', async () => {
+        if (isLoading || !this.claudeService) return;
+        isLoading = true;
+        sparkleBtn.addClass('is-loading');
+        sparkleBtn.setAttribute('disabled', 'true');
+
+        try {
+          const suggestion = await this.claudeService.suggestFromNote(this.noteContent);
+          if (suggestion.intention) {
+            intentionInput.value = suggestion.intention;
+            intentionInput.removeClass('illustration-finder-error');
+          }
+          if (suggestion.context) {
+            contextInput.value = suggestion.context;
+          }
+          if (!suggestion.intention && !suggestion.context) {
+            new Notice('Could not generate suggestions from this note.');
+          }
+        } catch {
+          new Notice('AI suggestion failed. Check your Anthropic API key.');
+        } finally {
+          isLoading = false;
+          sparkleBtn.removeClass('is-loading');
+          sparkleBtn.removeAttribute('disabled');
+        }
+      });
+    }
 
     // Sources selection
     const sourcesDiv = contentEl.createDiv({

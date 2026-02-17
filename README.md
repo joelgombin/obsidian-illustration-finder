@@ -30,7 +30,7 @@ created: '2026-02-16'
 
 ### Installation manuelle
 
-1. Téléchargez la dernière release depuis [GitHub](https://github.com/votre-repo/obsidian-illustration-finder/releases)
+1. Téléchargez la dernière release depuis [GitHub](https://github.com/joelgombin/obsidian-illustration-finder/releases)
 2. Extrayez le fichier ZIP dans votre dossier `.obsidian/plugins/`
 3. Redémarrez Obsidian
 4. Activez le plugin dans **Settings** → **Community plugins**
@@ -208,9 +208,8 @@ MIT License - voir [LICENSE](LICENSE)
 
 ## 📞 Support
 
-- 🐛 **Bugs** : [GitHub Issues](https://github.com/votre-repo/obsidian-illustration-finder/issues)
-- 💬 **Questions** : [Discussions](https://github.com/votre-repo/obsidian-illustration-finder/discussions)
-- 📧 **Email** : votre-email@example.com
+- 🐛 **Bugs** : [GitHub Issues](https://github.com/joelgombin/obsidian-illustration-finder/issues)
+- 💬 **Questions** : [Discussions](https://github.com/joelgombin/obsidian-illustration-finder/discussions)
 
 ---
 
