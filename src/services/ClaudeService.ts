@@ -69,7 +69,7 @@ export class ClaudeService {
   private client: Anthropic;
 
   constructor(apiKey: string) {
-    this.client = new Anthropic({ apiKey });
+    this.client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
   }
 
   async analyzeIntention(
