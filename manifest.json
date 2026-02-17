@@ -1,7 +1,7 @@
 {
   "id": "illustration-finder",
   "name": "Illustration Finder",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "minAppVersion": "1.0.0",
   "description": "Search and insert royalty-free illustrations with the help of Claude AI",
   "author": "Joel Gombin",
