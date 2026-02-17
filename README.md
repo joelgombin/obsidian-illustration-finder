@@ -2,7 +2,7 @@
 
 > Search and insert royalty-free illustrations directly into your Obsidian notes, powered by Claude AI.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/github/manifest-json/v/joelgombin/obsidian-illustration-finder)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## Features
