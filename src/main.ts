@@ -69,10 +69,18 @@ export default class IllustrationFinderPlugin extends Plugin {
   }
 
   private openSearchModal() {
+    let noteContent = '';
+    const editor = this.app.workspace.activeEditor?.editor;
+    if (editor) {
+      noteContent = editor.getValue();
+    }
+
     const modal = new SearchModal(
       this.app,
       this.settings.defaultSources,
       this.settings.defaultResultCount,
+      this.claudeService,
+      noteContent,
       async (params: SearchParams) => {
         await this.handleSearch(params);
       }

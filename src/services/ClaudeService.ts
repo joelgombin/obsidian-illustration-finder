@@ -165,6 +165,42 @@ Sources disponibles: ${selectedSources.join(', ')}`;
     };
   }
 
+  async suggestFromNote(noteContent: string): Promise<{ intention: string; context: string }> {
+    const truncated = noteContent.slice(0, 2000);
+
+    try {
+      const response = await this.client.messages.create({
+        model: MODEL,
+        max_tokens: 256,
+        system: `Tu es un assistant qui aide à trouver des illustrations pour des notes.
+À partir du contenu d'une note, tu dois suggérer :
+1. Une description d'illustration pertinente (champ "intention") - décris le type d'image qui illustrerait bien cette note
+2. Un résumé du contexte de la note (champ "context") - en une phrase
+
+Retourne UNIQUEMENT un JSON valide :
+{"intention": "...", "context": "..."}`,
+        messages: [{ role: 'user', content: truncated }],
+      });
+
+      const text = response.content[0].type === 'text' ? response.content[0].text : '';
+      const parsed = this.parseJSON(text);
+
+      if (parsed?.intention && parsed?.context) {
+        return {
+          intention: String(parsed.intention).slice(0, 500),
+          context: String(parsed.context).slice(0, 300),
+        };
+      }
+    } catch (error: any) {
+      if (error.status === 401 || error.status === 403) {
+        throw new Error('Invalid Anthropic API key');
+      }
+      console.warn('Claude suggestion failed:', error);
+    }
+
+    return { intention: '', context: '' };
+  }
+
   private createFallback(
     intention: string,
     selectedSources: string[]
