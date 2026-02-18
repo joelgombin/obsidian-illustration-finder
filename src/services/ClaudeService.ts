@@ -1,6 +1,32 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { IntentionAnalysis, MetFilters } from '../types/types';
 
+interface RawClaudeResponse {
+  analysis?: {
+    type?: string;
+    period?: string | null;
+    style?: string | null;
+    keywords?: string[];
+  };
+  sources?: string[];
+  queries?: Record<string, string>;
+  metFilters?: {
+    departmentId?: number | null;
+    dateBegin?: number | null;
+    dateEnd?: number | null;
+  };
+  reasoning?: string;
+}
+
+interface RawSuggestionResponse {
+  intention?: string;
+  context?: string;
+}
+
+function isApiError(error: unknown): error is Error & { status: number } {
+  return error instanceof Error && 'status' in error && typeof (error as Record<string, unknown>).status === 'number';
+}
+
 const MODEL = 'claude-sonnet-4-20250514';
 const MAX_RETRIES = 2;
 
@@ -127,18 +153,18 @@ Sources disponibles: ${selectedSources.join(', ')}`;
 
         const text =
           response.content[0].type === 'text' ? response.content[0].text : '';
-        const parsed = this.parseJSON(text);
+        const parsed = this.parseJSON(text) as RawClaudeResponse | null;
 
         if (parsed) {
           return this.validateAnalysis(parsed, selectedSources);
         }
 
         lastError = new Error('Invalid JSON response from Claude');
-      } catch (error: any) {
-        if (error.status === 401 || error.status === 403) {
+      } catch (error: unknown) {
+        if (isApiError(error) && (error.status === 401 || error.status === 403)) {
           throw new Error('Invalid Anthropic API key');
         }
-        lastError = error;
+        lastError = error instanceof Error ? error : new Error(String(error));
       }
     }
 
@@ -150,7 +176,7 @@ Sources disponibles: ${selectedSources.join(', ')}`;
     return this.createFallback(intention, selectedSources);
   }
 
-  private parseJSON(text: string): any | null {
+  private parseJSON(text: string): unknown {
     // Strip markdown code fences if present
     const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
     const cleanText = fenceMatch ? fenceMatch[1].trim() : text.trim();
@@ -163,7 +189,7 @@ Sources disponibles: ${selectedSources.join(', ')}`;
   }
 
   private validateAnalysis(
-    parsed: any,
+    parsed: RawClaudeResponse,
     selectedSources: string[]
   ): IntentionAnalysis {
     const result: IntentionAnalysis = {
@@ -219,7 +245,7 @@ Retourne UNIQUEMENT un JSON valide :
       });
 
       const text = response.content[0].type === 'text' ? response.content[0].text : '';
-      const parsed = this.parseJSON(text);
+      const parsed = this.parseJSON(text) as RawSuggestionResponse | null;
 
       if (parsed?.intention && parsed?.context) {
         return {
@@ -227,8 +253,8 @@ Retourne UNIQUEMENT un JSON valide :
           context: String(parsed.context).slice(0, 300),
         };
       }
-    } catch (error: any) {
-      if (error.status === 401 || error.status === 403) {
+    } catch (error: unknown) {
+      if (isApiError(error) && (error.status === 401 || error.status === 403)) {
         throw new Error('Invalid Anthropic API key');
       }
       console.warn('Claude suggestion failed:', error);

@@ -1,5 +1,17 @@
 import { IllustrationResult } from '../types/types';
 
+interface UnsplashPhoto {
+  id: string;
+  description?: string;
+  alt_description?: string;
+  user?: { name?: string };
+  urls?: { regular?: string; thumb?: string };
+  links?: { html?: string; download?: string };
+  color?: string;
+  width?: number;
+  height?: number;
+}
+
 const BASE_URL = 'https://api.unsplash.com';
 const TIMEOUT = 10000;
 
@@ -33,13 +45,13 @@ export class UnsplashService {
       }
 
       const data = await response.json();
-      return (data.results || []).map((photo: any) => this.parsePhoto(photo));
+      return (data.results || []).map((photo: UnsplashPhoto) => this.parsePhoto(photo));
     } finally {
       clearTimeout(timeoutId);
     }
   }
 
-  private parsePhoto(photo: any): IllustrationResult {
+  private parsePhoto(photo: UnsplashPhoto): IllustrationResult {
     const photographerName = photo.user?.name || 'Unknown';
     return {
       id: photo.id,

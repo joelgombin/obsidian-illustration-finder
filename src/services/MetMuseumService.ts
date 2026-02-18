@@ -87,18 +87,18 @@ export class MetMuseumService {
     }
   }
 
-  private parseObject(obj: any): IllustrationResult {
-    const artist = obj.artistDisplayName || 'Unknown';
+  private parseObject(obj: Record<string, unknown>): IllustrationResult {
+    const artist = (obj.artistDisplayName as string) || 'Unknown';
     return {
       id: String(obj.objectID),
       source: 'Metropolitan Museum',
-      title: obj.title || 'Untitled',
-      description: obj.medium || undefined,
+      title: (obj.title as string) || 'Untitled',
+      description: (obj.medium as string) || undefined,
       artist,
-      date: obj.objectDate || undefined,
-      imageUrl: obj.primaryImage || '',
-      thumbnailUrl: obj.primaryImageSmall || obj.primaryImage || '',
-      sourceUrl: obj.objectURL || '',
+      date: (obj.objectDate as string) || undefined,
+      imageUrl: (obj.primaryImage as string) || '',
+      thumbnailUrl: (obj.primaryImageSmall as string) || (obj.primaryImage as string) || '',
+      sourceUrl: (obj.objectURL as string) || '',
       license: 'CC0',
       attribution: `${artist}, Metropolitan Museum of Art (CC0)`,
       metadata: {

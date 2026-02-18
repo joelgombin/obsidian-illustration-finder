@@ -81,8 +81,8 @@ export default class IllustrationFinderPlugin extends Plugin {
       this.settings.defaultResultCount,
       this.claudeService,
       noteContent,
-      async (params: SearchParams) => {
-        await this.handleSearch(params);
+      (params: SearchParams) => {
+        void this.handleSearch(params);
       }
     );
     modal.open();
@@ -100,12 +100,13 @@ export default class IllustrationFinderPlugin extends Plugin {
         results.results,
         results.errors,
         (result: IllustrationResult) => {
-          this.handleInsert(result);
+          void this.handleInsert(result);
         }
       ).open();
-    } catch (error: any) {
+    } catch (error: unknown) {
       loadingNotice.hide();
-      new Notice(`Search error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`Search error: ${message}`);
     }
   }
 
@@ -120,8 +121,9 @@ export default class IllustrationFinderPlugin extends Plugin {
           params.context || '',
           params.sources
         );
-      } catch (error: any) {
-        console.warn('Claude analysis failed, using fallback:', error.message);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn('Claude analysis failed, using fallback:', message);
         analysis = this.createFallbackAnalysis(params);
       }
     } else {
@@ -213,8 +215,9 @@ export default class IllustrationFinderPlugin extends Plugin {
           ? this.settings.maxImageWidth
           : undefined,
       });
-    } catch (error: any) {
-      new Notice(`Error inserting image: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`Error inserting image: ${message}`);
     }
   }
 }

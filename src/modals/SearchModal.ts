@@ -1,4 +1,4 @@
-import { App, Modal, Notice } from 'obsidian';
+import { App, Modal, Notice, setIcon } from 'obsidian';
 import { SearchParams } from '../types/types';
 import { ClaudeService } from '../services/ClaudeService';
 
@@ -81,34 +81,36 @@ export class SearchModal extends Modal {
         cls: 'illustration-finder-sparkle-btn',
         attr: { 'aria-label': 'Auto-fill from note with AI' },
       });
-      sparkleBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z"/></svg>';
+      setIcon(sparkleBtn, 'sparkles');
 
       let isLoading = false;
-      sparkleBtn.addEventListener('click', async () => {
+      sparkleBtn.addEventListener('click', () => {
         if (isLoading || !this.claudeService) return;
         isLoading = true;
         sparkleBtn.addClass('is-loading');
         sparkleBtn.setAttribute('disabled', 'true');
 
-        try {
-          const suggestion = await this.claudeService.suggestFromNote(this.noteContent);
-          if (suggestion.intention) {
-            intentionInput.value = suggestion.intention;
-            intentionInput.removeClass('illustration-finder-error');
-          }
-          if (suggestion.context) {
-            contextInput.value = suggestion.context;
-          }
-          if (!suggestion.intention && !suggestion.context) {
-            new Notice('Could not generate suggestions from this note.');
-          }
-        } catch {
-          new Notice('AI suggestion failed. Check your Anthropic API key.');
-        } finally {
-          isLoading = false;
-          sparkleBtn.removeClass('is-loading');
-          sparkleBtn.removeAttribute('disabled');
-        }
+        this.claudeService.suggestFromNote(this.noteContent)
+          .then((suggestion) => {
+            if (suggestion.intention) {
+              intentionInput.value = suggestion.intention;
+              intentionInput.removeClass('illustration-finder-error');
+            }
+            if (suggestion.context) {
+              contextInput.value = suggestion.context;
+            }
+            if (!suggestion.intention && !suggestion.context) {
+              new Notice('Could not generate suggestions from this note.');
+            }
+          })
+          .catch(() => {
+            new Notice('AI suggestion failed. Check your Anthropic API key.');
+          })
+          .finally(() => {
+            isLoading = false;
+            sparkleBtn.removeClass('is-loading');
+            sparkleBtn.removeAttribute('disabled');
+          });
       });
     }
 

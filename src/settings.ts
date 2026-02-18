@@ -41,13 +41,10 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Illustration Finder Settings' });
-
-    // API Keys section
-    containerEl.createEl('h3', { text: 'API Keys' });
+    new Setting(containerEl).setName('API keys').setHeading();
 
     new Setting(containerEl)
-      .setName('Anthropic API Key')
+      .setName('Anthropic API key')
       .setDesc('Required for Claude AI intent analysis')
       .addText((text) => {
         text.inputEl.type = 'password';
@@ -61,7 +58,7 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName('Unsplash API Key')
+      .setName('Unsplash API key')
       .setDesc('Optional - needed for Unsplash photo search')
       .addText((text) => {
         text.inputEl.type = 'password';
@@ -74,8 +71,7 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
           });
       });
 
-    // Folders section
-    containerEl.createEl('h3', { text: 'Folders' });
+    new Setting(containerEl).setName('Folders').setHeading();
 
     new Setting(containerEl)
       .setName('Illustration folder')
@@ -90,8 +86,7 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
           })
       );
 
-    // Behavior section
-    containerEl.createEl('h3', { text: 'Behavior' });
+    new Setting(containerEl).setName('Behavior').setHeading();
 
     new Setting(containerEl)
       .setName('Default result count')

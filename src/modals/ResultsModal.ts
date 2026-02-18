@@ -84,7 +84,7 @@ export class ResultsModal extends Modal {
       },
     });
     img.addEventListener('error', () => {
-      img.style.display = 'none';
+      img.hide();
       const placeholder = card.createDiv({
         cls: 'illustration-finder-img-placeholder',
       });
