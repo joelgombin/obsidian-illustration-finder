@@ -31,11 +31,8 @@ export class UnsplashService {
       },
     });
 
-      const data = await response.json();
-      return (data.results || []).map((photo: UnsplashPhoto) => this.parsePhoto(photo));
-    } finally {
-      clearTimeout(timeoutId);
-    }
+    const data = response.json;
+    return (data.results || []).map((photo: UnsplashPhoto) => this.parsePhoto(photo));
   }
 
   private parsePhoto(photo: UnsplashPhoto): IllustrationResult {
