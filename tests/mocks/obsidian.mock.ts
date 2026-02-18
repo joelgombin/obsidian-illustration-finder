@@ -117,6 +117,9 @@ export class Setting {
   setDesc(_desc: string) {
     return this;
   }
+  setHeading() {
+    return this;
+  }
   addText(_cb: any) {
     return this;
   }
@@ -127,6 +130,8 @@ export class Setting {
     return this;
   }
 }
+
+export function setIcon(_el: any, _iconId: string) {}
 
 export const MarkdownView = class {
   editor = new MockEditor();
