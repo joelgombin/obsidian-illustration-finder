@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:help.unsplash.com)",
+      "WebFetch(domain:deepwiki.com)"
+    ]
+  }
+}

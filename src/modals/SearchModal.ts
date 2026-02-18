@@ -50,7 +50,7 @@ export class SearchModal extends Modal {
       cls: 'illustration-finder-textarea',
       attr: {
         placeholder:
-          'e.g., a scientific engraving from the 19th century about electricity...',
+          'E.g., a scientific engraving from the 19th century about electricity...',
         maxlength: '500',
         rows: '3',
       },
@@ -68,7 +68,7 @@ export class SearchModal extends Modal {
     const contextInput = contextDiv.createEl('textarea', {
       cls: 'illustration-finder-textarea',
       attr: {
-        placeholder: 'e.g., blog post about the history of AI',
+        placeholder: 'E.g., blog post about the history of AI',
         maxlength: '300',
         rows: '2',
       },
@@ -103,7 +103,7 @@ export class SearchModal extends Modal {
             }
           })
           .catch(() => {
-            new Notice('AI suggestion failed, check your Anthropic API key.');
+            new Notice('Ai suggestion failed, check your Anthropic API key.');
           })
           .finally(() => {
             isLoading = false;
