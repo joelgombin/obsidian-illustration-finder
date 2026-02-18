@@ -1,7 +1,7 @@
 {
   "id": "illustration-finder",
   "name": "Illustration finder",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "minAppVersion": "1.0.0",
   "description": "Search and insert royalty-free illustrations directly into your notes, powered by AI.",
   "author": "Joel Gombin",
