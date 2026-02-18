@@ -12,7 +12,7 @@ export interface IllustrationResult {
   sourceUrl: string;
   license: string;
   attribution: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface MetFilters {
