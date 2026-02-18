@@ -5,7 +5,6 @@ import { ClaudeService } from '../services/ClaudeService';
 const SOURCE_OPTIONS = [
   { id: 'met', label: 'Metropolitan Museum' },
   { id: 'unsplash', label: 'Unsplash' },
-  { id: 'gallica', label: 'Gallica (BnF)' },
 ];
 
 export class SearchModal extends Modal {

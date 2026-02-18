@@ -1,6 +1,6 @@
 {
   "name": "obsidian-illustration-finder",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Search and insert royalty-free illustrations with Claude AI",
   "main": "main.js",
   "scripts": {

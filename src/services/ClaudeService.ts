@@ -30,28 +30,21 @@ function isApiError(error: unknown): error is Error & { status: number } {
 const MODEL = 'claude-sonnet-4-20250514';
 const MAX_RETRIES = 2;
 
-const SKILL_CONTENT = `Sources prioritaires pour illustrations libres de droit :
+const SKILL_CONTENT = `Sources disponibles pour illustrations libres de droit :
 
-1. Gallica (BnF) - gallica.bnf.fr
-   - Millions de documents français (gravures, estampes, photographies historiques, cartes anciennes)
-   - Domaine public, qualité exceptionnelle pour patrimoine français
-   - Idéal pour : Histoire, littérature française, sciences anciennes, cartes, estampes
-
-2. Metropolitan Museum (The Met) - metmuseum.org
+1. Metropolitan Museum (The Met) - metmuseum.org
    - 492 000+ œuvres en haute résolution, collection encyclopédique
    - Licence CC0 - aucune restriction
-   - Idéal pour : Art classique, antiquités, peintures de maîtres
+   - Idéal pour : Art classique, antiquités, peintures de maîtres, gravures historiques
 
-3. Unsplash - unsplash.com
+2. Unsplash - unsplash.com
    - Photos contemporaines haute qualité, esthétique moderne
    - Licence Unsplash (usage libre y compris commercial)
    - Idéal pour : Photos modernes, lifestyle, business, tech
 
 Choix selon contexte :
-- Historique / Patrimoine français → Gallica
-- Art classique / Antiquités → Met Museum
+- Art classique / Antiquités / Historique → Met Museum
 - Photos modernes / Business → Unsplash
-- Scientifique ancien → Gallica + Met Museum
 - Conceptuel / Abstrait → Met Museum + Unsplash`;
 
 const MET_DEPARTMENTS = `Départements du Met Museum (utilise departmentId pour filtrer) :
@@ -85,11 +78,10 @@ Format de réponse JSON attendu :
     "style": "string ou null",
     "keywords": ["mot1", "mot2", "mot3"]
   },
-  "sources": ["met", "unsplash", "gallica"],
+  "sources": ["met", "unsplash"],
   "queries": {
     "met": "requête optimisée pour Met Museum en anglais",
-    "unsplash": "requête optimisée pour Unsplash en anglais",
-    "gallica": "requête optimisée pour Gallica en français"
+    "unsplash": "requête optimisée pour Unsplash en anglais"
   },
   "metFilters": {
     "departmentId": null,
@@ -100,10 +92,9 @@ Format de réponse JSON attendu :
 }
 
 Règles importantes :
-- Pour des sujets historiques/patrimoine français → privilégier Gallica
-- Pour de l'art classique → privilégier Met Museum
+- Pour de l'art classique ou historique → privilégier Met Museum
 - Pour des photos modernes → privilégier Unsplash
-- Les requêtes doivent être en anglais pour Met/Unsplash, en français pour Gallica
+- Les requêtes doivent être en anglais
 - Les requêtes doivent être courtes et précises (3-6 mots)
 - metFilters.departmentId : un entier parmi les départements listés, ou null si non pertinent
 - metFilters.dateBegin/dateEnd : années (ex: 1800, 1900) pour borner la période, ou null

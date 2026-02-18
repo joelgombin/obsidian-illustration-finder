@@ -1,7 +1,7 @@
+import { requestUrl } from 'obsidian';
 import { IllustrationResult, MetFilters } from '../types/types';
 
 const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
-const TIMEOUT = 10000;
 
 export class MetMuseumService {
   async search(
@@ -9,50 +9,38 @@ export class MetMuseumService {
     limit: number = 5,
     filters?: MetFilters
   ): Promise<IllustrationResult[]> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+    let url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`;
 
-    try {
-      let url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`;
-
-      if (filters?.departmentId) {
-        url += `&departmentId=${filters.departmentId}`;
-      }
-      if (filters?.dateBegin != null && filters?.dateEnd != null) {
-        url += `&dateBegin=${filters.dateBegin}&dateEnd=${filters.dateEnd}`;
-      }
-
-      const response = await fetch(url, { signal: controller.signal });
-
-      if (!response.ok) {
-        throw new Error(`Met Museum search failed: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const objectIDs: number[] | null = data.objectIDs;
-
-      if (!objectIDs || objectIDs.length === 0) {
-        return [];
-      }
-
-      // Random sampling: pick `limit` random IDs from results
-      const sampled = this.randomSample(objectIDs, limit);
-
-      const settled = await Promise.allSettled(
-        sampled.map((id) => this.getObjectDetails(id))
-      );
-
-      const results: IllustrationResult[] = [];
-      for (const result of settled) {
-        if (result.status === 'fulfilled' && result.value.imageUrl) {
-          results.push(result.value);
-        }
-      }
-
-      return results;
-    } finally {
-      clearTimeout(timeoutId);
+    if (filters?.departmentId) {
+      url += `&departmentId=${filters.departmentId}`;
     }
+    if (filters?.dateBegin != null && filters?.dateEnd != null) {
+      url += `&dateBegin=${filters.dateBegin}&dateEnd=${filters.dateEnd}`;
+    }
+
+    const response = await requestUrl({ url });
+    const data = response.json;
+    const objectIDs: number[] | null = data.objectIDs;
+
+    if (!objectIDs || objectIDs.length === 0) {
+      return [];
+    }
+
+    // Random sampling: pick `limit` random IDs from results
+    const sampled = this.randomSample(objectIDs, limit);
+
+    const settled = await Promise.allSettled(
+      sampled.map((id) => this.getObjectDetails(id))
+    );
+
+    const results: IllustrationResult[] = [];
+    for (const result of settled) {
+      if (result.status === 'fulfilled' && result.value.imageUrl) {
+        results.push(result.value);
+      }
+    }
+
+    return results;
   }
 
   private randomSample(ids: number[], count: number): number[] {
@@ -69,22 +57,9 @@ export class MetMuseumService {
   }
 
   async getObjectDetails(objectId: number): Promise<IllustrationResult> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
-
-    try {
-      const url = `${BASE_URL}/objects/${objectId}`;
-      const response = await fetch(url, { signal: controller.signal });
-
-      if (!response.ok) {
-        throw new Error(`Met Museum object fetch failed: ${response.status}`);
-      }
-
-      const obj = await response.json();
-      return this.parseObject(obj);
-    } finally {
-      clearTimeout(timeoutId);
-    }
+    const url = `${BASE_URL}/objects/${objectId}`;
+    const response = await requestUrl({ url });
+    return this.parseObject(response.json);
   }
 
   private parseObject(obj: Record<string, unknown>): IllustrationResult {

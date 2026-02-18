@@ -14,7 +14,7 @@ import {
 import { ClaudeService } from './services/ClaudeService';
 import { MetMuseumService } from './services/MetMuseumService';
 import { UnsplashService } from './services/UnsplashService';
-import { GallicaService } from './services/GallicaService';
+
 import { ImageDownloader } from './services/ImageDownloader';
 import { SearchModal } from './modals/SearchModal';
 import { ResultsModal } from './modals/ResultsModal';
@@ -24,7 +24,7 @@ export default class IllustrationFinderPlugin extends Plugin {
   private claudeService: ClaudeService | null = null;
   private metService: MetMuseumService = new MetMuseumService();
   private unsplashService: UnsplashService | null = null;
-  private gallicaService: GallicaService = new GallicaService();
+
 
   async onload() {
     await this.loadSettings();
@@ -152,12 +152,6 @@ export default class IllustrationFinderPlugin extends Plugin {
           this.unsplashService
             .search(query, params.limit)
             .then((results) => ({ source: 'unsplash', results }))
-        );
-      } else if (source === 'gallica') {
-        searchPromises.push(
-          this.gallicaService
-            .search(query, params.limit)
-            .then((results) => ({ source: 'gallica', results }))
         );
       }
     }

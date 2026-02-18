@@ -1,4 +1,4 @@
-export type IllustrationSource = 'Metropolitan Museum' | 'Unsplash' | 'Gallica';
+export type IllustrationSource = 'Metropolitan Museum' | 'Unsplash';
 
 export interface IllustrationResult {
   id: string;

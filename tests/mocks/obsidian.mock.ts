@@ -132,6 +132,27 @@ export const MarkdownView = class {
   editor = new MockEditor();
 };
 
+// Mock requestUrl to delegate to global.fetch so existing test mocks work
+export async function requestUrl(request: any): Promise<any> {
+  const url = typeof request === 'string' ? request : request.url;
+  const options: any = {};
+  if (request.headers) options.headers = request.headers;
+  if (request.method) options.method = request.method;
+  if (request.body) options.body = request.body;
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  // Test mocks return { ok, json: async () => data, arrayBuffer: async () => data }
+  const json = typeof response.json === 'function' ? await response.json() : null;
+  const arrayBuffer = typeof response.arrayBuffer === 'function' ? await response.arrayBuffer() : new ArrayBuffer(0);
+
+  return { status: response.status || 200, headers: {}, arrayBuffer, json, text: JSON.stringify(json) };
+}
+
 function createMockElement(): any {
   return {
     empty() {},

@@ -1,216 +1,121 @@
----
-type: documentation
-project: obsidian-illustration-finder
-audience: end-users
-created: '2026-02-16'
----
-# README - Illustration Finder for Obsidian
+# Illustration Finder for Obsidian
 
-> Recherchez et insérez des illustrations libres de droit directement dans vos notes Obsidian, avec l'aide de l'IA Claude.
+> Search and insert royalty-free illustrations directly into your Obsidian notes, powered by Claude AI.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/github/manifest-json/v/joelgombin/obsidian-illustration-finder)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-## ✨ Fonctionnalités
+## Features
 
-- 🔍 **Recherche intelligente** : Décrivez simplement ce que vous voulez, Claude comprend votre intention
-- 🎨 **Sources multiples** : Metropolitan Museum (492K+ œuvres), Unsplash (photos modernes), Gallica (patrimoine français)
-- 📝 **Insertion automatique** : L'image est téléchargée et insérée avec l'attribution correcte
-- ⚡ **Rapide** : Résultats en quelques secondes
-- 🆓 **100% gratuit** : Toutes les images sont libres de droit (CC0, domaine public)
+- **Smart search**: Describe what you want — Claude analyzes your intent and builds optimized queries for each source
+- **AI auto-fill**: Click the sparkle button to let Claude suggest an illustration based on your current note content
+- **Multiple sources**: Metropolitan Museum (492K+ artworks), Unsplash (modern photos)
+- **Auto-insert**: The selected image is downloaded to your vault and inserted at cursor position with attribution
 
-## 🚀 Installation
+## Installation
 
-### Via Community Plugins (recommandé)
+### Via Community Plugins (recommended)
 
-1. Ouvrez Obsidian
-2. Allez dans **Settings** → **Community plugins** → **Browse**
-3. Recherchez "**Illustration Finder**"
-4. Cliquez sur **Install**, puis **Enable**
+1. Open Obsidian
+2. Go to **Settings** → **Community plugins** → **Browse**
+3. Search for "**Illustration Finder**"
+4. Click **Install**, then **Enable**
 
-### Installation manuelle
+### Manual installation
 
-1. Téléchargez la dernière release depuis [GitHub](https://github.com/joelgombin/obsidian-illustration-finder/releases)
-2. Extrayez le fichier ZIP dans votre dossier `.obsidian/plugins/`
-3. Redémarrez Obsidian
-4. Activez le plugin dans **Settings** → **Community plugins**
+1. Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/joelgombin/obsidian-illustration-finder/releases)
+2. Create a folder `illustration-finder` in your `.obsidian/plugins/` directory
+3. Copy the three files into it
+4. Restart Obsidian and enable the plugin in **Settings** → **Community plugins**
 
-## ⚙️ Configuration
+## Configuration
 
-### 1. Clé API Anthropic (requis)
+### Anthropic API key (required)
 
-Pour utiliser l'analyse intelligente des intentions, vous devez configurer une clé API Anthropic :
+Used by Claude to analyze your search intent and auto-fill from note content.
 
-1. Créez un compte sur [console.anthropic.com](https://console.anthropic.com)
-2. Générez une clé API
-3. Dans Obsidian : **Settings** → **Illustration Finder** → collez votre clé
+1. Create an account on [console.anthropic.com](https://console.anthropic.com)
+2. Generate an API key
+3. In Obsidian: **Settings** → **Illustration Finder** → paste your key
 
-**Note** : Les 5 premiers crédits sont gratuits, puis ~$0.003 par recherche.
+Without this key, the plugin still works but searches use your raw text as-is (no intent analysis).
 
-### 2. Clé API Unsplash (optionnel)
+### Unsplash API key (optional)
 
-Pour rechercher des photos modernes :
+Required only if you want to search Unsplash photos.
 
-1. Créez un compte sur [unsplash.com/developers](https://unsplash.com/developers)
-2. Créez une application
-3. Copiez votre Access Key
-4. Dans Obsidian : **Settings** → **Illustration Finder** → collez la clé
+1. Create an account on [unsplash.com/developers](https://unsplash.com/developers)
+2. Create an application
+3. Copy your Access Key
+4. In Obsidian: **Settings** → **Illustration Finder** → paste the key
 
-**Note** : 50 requêtes/heure en gratuit.
+**Note**: 50 requests/hour on the demo mode.
 
-### 3. Paramètres
+### Other settings
 
-- **Dossier des illustrations** : Où sauvegarder les images (défaut : `Assets/Illustrations`)
-- **Redimensionner** : Redimensionner automatiquement les images (recommandé)
-- **Attribution** : Inclure l'attribution dans la note (recommandé pour respect des licences)
+- **Illustrations folder**: Where downloaded images are saved (default: `Assets/Illustrations`)
+- **Default result count**: Number of results per source (1–20, default: 5)
+- **Auto resize / Max width**: Resize images on download (default: 1920px)
+- **Include attribution**: Add source/license text below inserted images
+- **Cache results**: Cache search results for faster repeat searches
 
-## 📖 Utilisation
+## Usage
 
-### Recherche basique
+1. Place your cursor where you want the image
+2. Open the command palette (`Ctrl/Cmd + P`)
+3. Run **"Illustration Finder: Search for an illustration"**
+4. Describe what you're looking for — or click the sparkle button to auto-fill from your note
+5. Optionally add context (e.g. "blog post about neuroscience")
+6. Select which sources to search (Met Museum, Unsplash)
+7. Pick an image from the results — it gets downloaded and inserted automatically
 
-1. Placez votre curseur où vous voulez l'image
-2. Ouvrez la palette de commandes (`Ctrl/Cmd + P`)
-3. Tapez "**Illustration Finder**" et sélectionnez la commande
-4. Décrivez votre intention :
-   ```
-   Une gravure scientifique du 19e siècle sur l'électricité
-   ```
-5. Choisissez une image dans les résultats
-6. L'image est insérée automatiquement !
+You can assign a custom hotkey in **Settings** → **Hotkeys** → search for "Illustration Finder".
 
-### Raccourci clavier
+### How Claude helps
 
-Par défaut : `Ctrl/Cmd + Shift + I`
+When an Anthropic API key is configured, Claude:
+- Analyzes your intent to determine the type of illustration (historical, modern, scientific, etc.)
+- Picks the best sources based on context
+- Formulates optimized search queries per source in English
+- Suggests Met Museum department filters and date ranges for more relevant results
 
-Personnalisable dans **Settings** → **Hotkeys** → **Illustration Finder**
+## Available sources
 
-### Exemples de recherches
+| Source | Type | License |
+|--------|------|---------|
+| **Metropolitan Museum** | Classical art, antiquities, 492K+ works | CC0 (public domain) |
+| **Unsplash** | Modern photos | [Unsplash License](https://unsplash.com/license) |
 
-**Art historique** :
-```
-Portrait Renaissance italienne
-```
-→ Recherchera dans Metropolitan Museum
+## Network usage
 
-**Science ancienne** :
-```
-Gravure anatomique planche botanique
-```
-→ Recherchera dans Gallica et Met Museum
+This plugin makes network requests to the following external services:
 
-**Photo moderne** :
-```
-Bureau moderne avec plantes
-```
-→ Recherchera dans Unsplash
+- **Anthropic API** (`api.anthropic.com`) — AI intent analysis and note-based suggestions. Requires a user-provided API key. Your search query and (optionally) note content are sent to generate optimized search terms. No data is stored by the plugin beyond the current session.
+- **Metropolitan Museum API** (`collectionapi.metmuseum.org`) — Public API, no authentication required. Search queries and image downloads.
+- **Unsplash API** (`api.unsplash.com`) — Photo search. Requires a user-provided API key. Unsplash images are hotlinked (not downloaded) per [Unsplash guidelines](https://help.unsplash.com/en/articles/2511271-guideline-hotlinking-images).
 
-**Abstrait/Conceptuel** :
-```
-Illustration ironique du temps qui passe
-```
-→ Claude choisira les meilleures sources selon le contexte
+This plugin does not collect telemetry or send any data to the plugin author.
 
-## 🎯 Sources disponibles
+## Contributing
 
-| Source | Type | Nombre d'œuvres | Licence |
-|--------|------|-----------------|---------|
-| **Metropolitan Museum** | Art classique, antiquités | 492 000+ | CC0 (domaine public) |
-| **Unsplash** | Photos modernes | Millions | Unsplash License |
-| **Gallica (BnF)** | Patrimoine français | Millions | Domaine public |
+Contributions are welcome!
 
-### Quand utiliser quelle source ?
+1. Fork the project
+2. Create a branch (`git checkout -b feature/improvement`)
+3. `npm install && npm test && npm run build`
+4. Commit and open a Pull Request
 
-- **Art classique, peintures, sculptures** → Met Museum
-- **Photos modernes, lifestyle, tech** → Unsplash  
-- **Patrimoine français, gravures anciennes, cartes** → Gallica
-- **Pas sûr ?** → Laissez Claude choisir !
+## License
 
-## 💡 Conseils d'utilisation
+MIT — see [LICENSE](LICENSE)
 
-### Soyez spécifique
+## Acknowledgements
 
-❌ Mauvais : "Une image de nature"
-✅ Bon : "Paysage de montagne enneigée au lever du soleil"
+- [Metropolitan Museum](https://www.metmuseum.org/) for their open access collection
+- [Unsplash](https://unsplash.com/) for their photo library
+- [Anthropic](https://www.anthropic.com/) for the Claude API
 
-### Donnez du contexte
+## Support
 
-Utilisez le champ "Contexte" pour affiner :
-```
-Intention : Illustration scientifique cerveau
-Contexte : Article sur les neurosciences pour étudiants
-```
-
-### Vérifiez l'attribution
-
-Même si les images sont libres de droit, il est recommandé de garder l'attribution pour :
-- Respecter le travail des artistes/photographes
-- Tracer la source de vos images
-- Respecter les bonnes pratiques académiques
-
-## 🔧 Dépannage
-
-### "Erreur : API key invalide"
-
-- Vérifiez que votre clé Anthropic est correcte
-- Vérifiez que vous avez encore des crédits
-- Essayez de régénérer une nouvelle clé
-
-### "Aucun résultat trouvé"
-
-- Essayez une recherche plus générale
-- Vérifiez votre connexion internet
-- Essayez une autre source
-- Reformulez votre intention
-
-### "Les images ne se téléchargent pas"
-
-- Vérifiez les permissions du dossier de destination
-- Vérifiez l'espace disque disponible
-- Essayez de changer le dossier dans les paramètres
-
-### Performance lente
-
-- Réduisez le nombre de résultats demandés
-- Désactivez le cache si problème de mémoire
-- Vérifiez votre connexion internet
-
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues !
-
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/amelioration`)
-3. Commit vos changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
-4. Push (`git push origin feature/amelioration`)
-5. Ouvrez une Pull Request
-
-## 📝 Changelog
-
-### v1.0.0 (2026-02-16)
-
-- 🎉 Release initiale
-- ✨ Recherche Met Museum
-- ✨ Recherche Unsplash
-- ✨ Analyse d'intention par Claude
-- ✨ Insertion automatique avec attribution
-- ⚙️ Configuration des paramètres
-
-## 📄 Licence
-
-MIT License - voir [LICENSE](LICENSE)
-
-## 🙏 Remerciements
-
-- [Metropolitan Museum](https://www.metmuseum.org/) pour leur incroyable collection en open access
-- [Unsplash](https://unsplash.com/) pour leurs magnifiques photos
-- [Gallica (BnF)](https://gallica.bnf.fr/) pour la numérisation du patrimoine français
-- [Anthropic](https://www.anthropic.com/) pour l'API Claude
-
-## 📞 Support
-
-- 🐛 **Bugs** : [GitHub Issues](https://github.com/joelgombin/obsidian-illustration-finder/issues)
-- 💬 **Questions** : [Discussions](https://github.com/joelgombin/obsidian-illustration-finder/discussions)
-
----
-
-**Fait avec ❤️ pour la communauté Obsidian**
+- **Bugs**: [GitHub Issues](https://github.com/joelgombin/obsidian-illustration-finder/issues)
+- **Questions**: [Discussions](https://github.com/joelgombin/obsidian-illustration-finder/discussions)
