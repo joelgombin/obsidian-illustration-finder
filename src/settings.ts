@@ -45,11 +45,11 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Anthropic API key')
-      .setDesc('Required for Claude AI intent analysis')
+      .setDesc('Required to enable AI suggestions')
       .addText((text) => {
         text.inputEl.type = 'password';
         text
-          .setPlaceholder('sk-ant-...')
+          .setPlaceholder('Enter your API key')
           .setValue(this.plugin.settings.anthropicApiKey)
           .onChange(async (value) => {
             this.plugin.settings.anthropicApiKey = value;
@@ -59,11 +59,11 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Unsplash API key')
-      .setDesc('Optional - needed for Unsplash photo search')
+      .setDesc('Optional, enables photo search')
       .addText((text) => {
         text.inputEl.type = 'password';
         text
-          .setPlaceholder('Your Unsplash access key')
+          .setPlaceholder('Enter your access key')
           .setValue(this.plugin.settings.unsplashApiKey)
           .onChange(async (value) => {
             this.plugin.settings.unsplashApiKey = value;
@@ -78,7 +78,7 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
       .setDesc('Folder where downloaded illustrations are stored')
       .addText((text) =>
         text
-          .setPlaceholder('Assets/Illustrations')
+          .setPlaceholder('Assets/illustrations')
           .setValue(this.plugin.settings.illustrationFolder)
           .onChange(async (value) => {
             this.plugin.settings.illustrationFolder = value;
