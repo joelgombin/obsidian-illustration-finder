@@ -8,7 +8,7 @@ describe('UnsplashService', () => {
 
   beforeEach(() => {
     service = new UnsplashService('test-api-key');
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should search and return results', async () => {
@@ -59,7 +59,17 @@ describe('UnsplashService', () => {
       statusText: 'Too Many Requests',
     });
 
-    await expect(service.search('test', 5)).rejects.toThrow();
+    await expect(service.search('test', 5)).rejects.toThrow(/rate limit/i);
+  });
+
+  it('should name the API key as the cause of a 401', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+      statusText: 'Unauthorized',
+    });
+
+    await expect(service.search('test', 5)).rejects.toThrow(/API key/i);
   });
 
   it('should handle empty results', async () => {

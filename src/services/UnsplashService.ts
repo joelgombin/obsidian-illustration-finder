@@ -29,7 +29,18 @@ export class UnsplashService {
       headers: {
         Authorization: `Client-ID ${this.apiKey}`,
       },
+      throw: false,
     });
+
+    if (response.status === 401 || response.status === 403) {
+      throw new Error('Invalid Unsplash API key, check it in settings');
+    }
+    if (response.status === 429) {
+      throw new Error('Unsplash rate limit reached, try again later');
+    }
+    if (response.status >= 400) {
+      throw new Error(`Unsplash request failed (status ${response.status})`);
+    }
 
     const data = response.json;
     return (data.results || []).map((photo: UnsplashPhoto) => this.parsePhoto(photo));

@@ -147,7 +147,8 @@ export async function requestUrl(request: any): Promise<any> {
 
   const response = await fetch(url, options);
 
-  if (!response.ok) {
+  // Obsidian's requestUrl throws on 400+ unless `throw: false` is passed.
+  if (!response.ok && request.throw !== false) {
     throw new Error(`Request failed: ${response.status}`);
   }
 
