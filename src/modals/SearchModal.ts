@@ -102,8 +102,12 @@ export class SearchModal extends Modal {
               new Notice('Could not generate suggestions from this note.');
             }
           })
-          .catch(() => {
-            new Notice('Ai suggestion failed, check your Anthropic API key.');
+          .catch((error: unknown) => {
+            const message =
+              error instanceof Error
+                ? error.message
+                : 'check your Anthropic API key';
+            new Notice(`Ai suggestion failed: ${message}`);
           })
           .finally(() => {
             isLoading = false;
