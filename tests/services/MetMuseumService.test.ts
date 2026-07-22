@@ -12,7 +12,7 @@ describe('MetMuseumService', () => {
 
   beforeEach(() => {
     service = new MetMuseumService();
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   describe('search', () => {
@@ -106,6 +106,61 @@ describe('MetMuseumService', () => {
 
       // 1 search call + limit detail calls
       expect(fetch).toHaveBeenCalledTimes(limit + 1);
+    });
+
+    it('should drop the date range when filters return nothing', async () => {
+      (fetch as jest.Mock)
+        // departmentId + dates -> no match
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ total: 0, objectIDs: null }) })
+        // departmentId alone -> a match
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ total: 1, objectIDs: [1] }) })
+        .mockResolvedValueOnce({ ok: true, json: async () => metObjectDetails });
+
+      const results = await service.search('electricity engraving', 1, {
+        departmentId: 9,
+        dateBegin: 1800,
+        dateEnd: 1899,
+      });
+
+      expect(results).toHaveLength(1);
+
+      const urls = (fetch as jest.Mock).mock.calls.map((c) => c[0] as string);
+      expect(urls[0]).toContain('dateBegin=1800');
+      expect(urls[1]).toContain('departmentId=9');
+      expect(urls[1]).not.toContain('dateBegin');
+    });
+
+    it('should drop all filters when the department alone returns nothing', async () => {
+      (fetch as jest.Mock)
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ total: 0, objectIDs: null }) })
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ total: 0, objectIDs: null }) })
+        // unfiltered -> a match
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ total: 1, objectIDs: [1] }) })
+        .mockResolvedValueOnce({ ok: true, json: async () => metObjectDetails });
+
+      const results = await service.search('electricity engraving', 1, {
+        departmentId: 9,
+        dateBegin: 1800,
+        dateEnd: 1899,
+      });
+
+      expect(results).toHaveLength(1);
+
+      const urls = (fetch as jest.Mock).mock.calls.map((c) => c[0] as string);
+      expect(urls[2]).not.toContain('departmentId');
+      expect(urls[2]).not.toContain('dateBegin');
+    });
+
+    it('should not retry when no filters were supplied', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ total: 0, objectIDs: null }),
+      });
+
+      const results = await service.search('nothing matches this', 5);
+
+      expect(results).toHaveLength(0);
+      expect(fetch).toHaveBeenCalledTimes(1);
     });
   });
 

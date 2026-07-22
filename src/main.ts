@@ -146,15 +146,17 @@ export default class IllustrationFinderPlugin extends Plugin {
 
       if (source === 'met') {
         searchPromises.push(
-          this.metService
-            .search(query, params.limit, analysis.metFilters)
-            .then((results) => ({ source: 'met', results }))
+          this.tagSource(
+            'met',
+            this.metService.search(query, params.limit, analysis.metFilters)
+          )
         );
       } else if (source === 'unsplash' && this.unsplashService) {
         searchPromises.push(
-          this.unsplashService
-            .search(query, params.limit)
-            .then((results) => ({ source: 'unsplash', results }))
+          this.tagSource(
+            'unsplash',
+            this.unsplashService.search(query, params.limit)
+          )
         );
       }
     }
@@ -184,6 +186,23 @@ export default class IllustrationFinderPlugin extends Plugin {
       errors,
       timestamp: Date.now(),
     };
+  }
+
+  /**
+   * Carries the source name onto the rejection path too, so a failed search is
+   * reported against the source that produced it rather than as "unknown".
+   */
+  private tagSource(
+    source: string,
+    search: Promise<IllustrationResult[]>
+  ): Promise<{ source: string; results: IllustrationResult[] }> {
+    return search.then(
+      (results) => ({ source, results }),
+      (error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        throw Object.assign(new Error(message), { source });
+      }
+    );
   }
 
   private createFallbackAnalysis(params: SearchParams): IntentionAnalysis {

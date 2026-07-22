@@ -3,15 +3,49 @@ import { IllustrationResult, MetFilters } from '../types/types';
 
 const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
 
+/**
+ * Claude's suggested filters routinely narrow a search down to nothing: for
+ * "electricity scientific engraving" the Met returns 20 objects unfiltered, 1
+ * once a department is applied and 0 once a date range is added. Return
+ * progressively looser filter sets so a search can fall back instead of
+ * reporting no results.
+ */
+function relaxFilters(filters?: MetFilters): (MetFilters | undefined)[] {
+  const hasDates = filters?.dateBegin != null || filters?.dateEnd != null;
+  const hasDepartment = filters?.departmentId != null;
+
+  if (!hasDates && !hasDepartment) return [undefined];
+
+  const candidates: (MetFilters | undefined)[] = [filters];
+  if (hasDates && hasDepartment) {
+    candidates.push({ departmentId: filters?.departmentId });
+  }
+  candidates.push(undefined);
+  return candidates;
+}
+
 export class MetMuseumService {
   async search(
     query: string,
     limit: number = 5,
     filters?: MetFilters
   ): Promise<IllustrationResult[]> {
+    for (const candidate of relaxFilters(filters)) {
+      const results = await this.searchWithFilters(query, limit, candidate);
+      if (results.length > 0) return results;
+    }
+
+    return [];
+  }
+
+  private async searchWithFilters(
+    query: string,
+    limit: number,
+    filters?: MetFilters
+  ): Promise<IllustrationResult[]> {
     let url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`;
 
-    if (filters?.departmentId) {
+    if (filters?.departmentId != null) {
       url += `&departmentId=${filters.departmentId}`;
     }
     if (filters?.dateBegin != null && filters?.dateEnd != null) {
