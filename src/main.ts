@@ -56,7 +56,10 @@ export default class IllustrationFinderPlugin extends Plugin {
 
   private initServices() {
     if (this.settings.anthropicApiKey) {
-      this.claudeService = new ClaudeService(this.settings.anthropicApiKey);
+      this.claudeService = new ClaudeService(
+        this.settings.anthropicApiKey,
+        this.settings.claudeModel
+      );
     } else {
       this.claudeService = null;
     }

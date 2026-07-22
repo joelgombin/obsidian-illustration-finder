@@ -1,8 +1,10 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import type IllustrationFinderPlugin from './main';
+import { CLAUDE_MODELS, DEFAULT_MODEL } from './services/ClaudeService';
 
 export interface IllustrationFinderSettings {
   anthropicApiKey: string;
+  claudeModel: string;
   unsplashApiKey: string;
   illustrationFolder: string;
   defaultSources: string[];
@@ -17,6 +19,7 @@ export interface IllustrationFinderSettings {
 
 export const DEFAULT_SETTINGS: IllustrationFinderSettings = {
   anthropicApiKey: '',
+  claudeModel: DEFAULT_MODEL,
   unsplashApiKey: '',
   illustrationFolder: 'Assets/Illustrations',
   defaultSources: ['met', 'unsplash'],
@@ -53,6 +56,21 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
           .setValue(this.plugin.settings.anthropicApiKey)
           .onChange(async (value) => {
             this.plugin.settings.anthropicApiKey = value;
+            await this.plugin.saveSettings();
+          });
+      });
+
+    new Setting(containerEl)
+      .setName('Claude model')
+      .setDesc('Model used for search analysis and note auto-fill')
+      .addDropdown((dropdown) => {
+        for (const model of CLAUDE_MODELS) {
+          dropdown.addOption(model.id, model.label);
+        }
+        dropdown
+          .setValue(this.plugin.settings.claudeModel || DEFAULT_MODEL)
+          .onChange(async (value) => {
+            this.plugin.settings.claudeModel = value;
             await this.plugin.saveSettings();
           });
       });
