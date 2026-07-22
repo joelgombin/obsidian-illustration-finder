@@ -23,12 +23,39 @@ interface RawSuggestionResponse {
   context?: string;
 }
 
+/**
+ * Models offered in settings. Haiku is the default: on this plugin's two
+ * prompts it picks the same Met department, date range and search terms as
+ * Sonnet and Opus, while being the fastest and cheapest.
+ */
+export const CLAUDE_MODELS = [
+  { id: 'claude-haiku-4-5', label: 'Haiku 4.5 (fastest, cheapest)' },
+  { id: 'claude-sonnet-5', label: 'Sonnet 5 (balanced)' },
+  { id: 'claude-opus-4-8', label: 'Opus 4.8 (most capable)' },
+] as const;
+
+export const DEFAULT_MODEL = 'claude-haiku-4-5';
+
+const MAX_RETRIES = 2;
+
 function isApiError(error: unknown): error is Error & { status: number } {
   return error instanceof Error && 'status' in error && typeof (error as Record<string, unknown>).status === 'number';
 }
 
-const MODEL = 'claude-sonnet-4-20250514';
-const MAX_RETRIES = 2;
+/**
+ * Translates an API failure into a message worth showing the user. Returns null
+ * for errors the caller should treat as transient and retry.
+ */
+function toUserFacingError(error: unknown, model: string): Error | null {
+  if (!isApiError(error)) return null;
+  if (error.status === 401 || error.status === 403) {
+    return new Error('Invalid Anthropic API key');
+  }
+  if (error.status === 404) {
+    return new Error(`Model ${model} is unavailable, pick another in settings.`);
+  }
+  return null;
+}
 
 const SKILL_CONTENT = `Sources disponibles pour illustrations libres de droit :
 
@@ -102,9 +129,11 @@ Règles importantes :
 
 export class ClaudeService {
   private client: Anthropic;
+  private model: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, model: string = DEFAULT_MODEL) {
     this.client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
+    this.model = model || DEFAULT_MODEL;
   }
 
   async analyzeIntention(
@@ -136,8 +165,11 @@ Sources disponibles: ${selectedSources.join(', ')}`;
         }
 
         const response = await this.client.messages.create({
-          model: MODEL,
+          model: this.model,
           max_tokens: 1024,
+          // Some models enable thinking by default; it would eat the token
+          // budget without helping a plain JSON extraction.
+          thinking: { type: 'disabled' },
           system: SYSTEM_PROMPT,
           messages,
         });
@@ -152,9 +184,8 @@ Sources disponibles: ${selectedSources.join(', ')}`;
 
         lastError = new Error('Invalid JSON response from Claude');
       } catch (error: unknown) {
-        if (isApiError(error) && (error.status === 401 || error.status === 403)) {
-          throw new Error('Invalid Anthropic API key');
-        }
+        const fatal = toUserFacingError(error, this.model);
+        if (fatal) throw fatal;
         lastError = error instanceof Error ? error : new Error(String(error));
       }
     }
@@ -223,8 +254,9 @@ Sources disponibles: ${selectedSources.join(', ')}`;
 
     try {
       const response = await this.client.messages.create({
-        model: MODEL,
-        max_tokens: 256,
+        model: this.model,
+        max_tokens: 700,
+        thinking: { type: 'disabled' },
         system: `Tu es un assistant qui aide à trouver des illustrations pour des notes.
 À partir du contenu d'une note, tu dois suggérer :
 1. Une description d'illustration pertinente (champ "intention") - décris le type d'image qui illustrerait bien cette note
@@ -238,16 +270,16 @@ Retourne UNIQUEMENT un JSON valide :
       const text = response.content[0].type === 'text' ? response.content[0].text : '';
       const parsed = this.parseJSON(text) as RawSuggestionResponse | null;
 
-      if (parsed?.intention && parsed?.context) {
+      // Either field alone is still worth filling in.
+      if (parsed?.intention || parsed?.context) {
         return {
-          intention: String(parsed.intention).slice(0, 500),
-          context: String(parsed.context).slice(0, 300),
+          intention: String(parsed.intention || '').slice(0, 500),
+          context: String(parsed.context || '').slice(0, 300),
         };
       }
     } catch (error: unknown) {
-      if (isApiError(error) && (error.status === 401 || error.status === 403)) {
-        throw new Error('Invalid Anthropic API key');
-      }
+      const fatal = toUserFacingError(error, this.model);
+      if (fatal) throw fatal;
       console.warn('Claude suggestion failed:', error);
     }
 
