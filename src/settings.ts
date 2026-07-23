@@ -76,8 +76,10 @@ export class IllustrationFinderSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName('Unsplash API key')
-      .setDesc('Optional, enables photo search')
+      .setName('Unsplash access key')
+      .setDesc(
+        'Optional, enables photo search. Use the access key, not the secret key — both are 43 characters, and the secret key fails with a 401.'
+      )
       .addText((text) => {
         text.inputEl.type = 'password';
         text
