@@ -46,10 +46,15 @@ Required only if you want to search Unsplash photos.
 
 1. Create an account on [unsplash.com/developers](https://unsplash.com/developers)
 2. Create an application
-3. Copy your Access Key
+3. Copy your **Access Key** — *not* the Secret Key
 4. In Obsidian: **Settings** → **Illustration Finder** → paste the key
 
 **Note**: 50 requests/hour on the demo mode.
+
+Unsplash shows two keys and both are 43 characters, so they are easy to mix up.
+The plugin only reads public endpoints, which authenticate with the Access Key;
+the Secret Key is for OAuth flows that act on behalf of a user and is rejected
+with `401 OAuth error: The access token is invalid`.
 
 ### Other settings
 
